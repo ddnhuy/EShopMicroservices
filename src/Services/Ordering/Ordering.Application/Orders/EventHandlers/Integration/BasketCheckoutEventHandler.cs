@@ -5,7 +5,7 @@ using Ordering.Domain.Enums;
 
 namespace Ordering.Application.Orders.EventHandlers.Integration
 {
-    internal class BasketCheckoutEventHandler(
+    public class BasketCheckoutEventHandler(
         ISender sender,
         ILogger<BasketCheckoutEventHandler> logger)
         : IConsumer<BasketCheckoutEvent>
