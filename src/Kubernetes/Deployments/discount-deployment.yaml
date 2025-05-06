@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discount-grpc
+  namespace: eshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: discount-grpc
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: discount-grpc
+    spec:
+      containers:
+        - name: discount-grpc
+          image: ddnhuy/discount-grpc
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: sqlite-storage
+              mountPath: /app/data
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      volumes:
+        - name: sqlite-storage
+          persistentVolumeClaim:
+            claimName: discount-pvc
+        - name: config-volume
+          configMap:
+            name: service-discount-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

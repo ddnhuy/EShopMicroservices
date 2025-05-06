@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-api
+  namespace: eshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-api
+  template:
+    metadata:
+      labels:
+        app: order-api
+    spec:
+      containers:
+        - name: order-api
+          image: ddnhuy/ordering-api
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: service-order-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      initContainers:
+        - name: wait-for-sqlserver
+          image: busybox
+          command: ['sh', '-c', 'until nc -z sqlserver 1433; do echo waiting for postgres; sleep 2; done']
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+      volumes:
+        - name: config-volume
+          configMap:
+            name: service-order-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

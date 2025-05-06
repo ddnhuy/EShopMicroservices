@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-basket-config
+  namespace: eshop
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "Database": "Server=postgres-basket;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true;",
+        "Redis": "redis:6379"
+      },
+      "GrpcSettings": {
+        "DiscountUrl": "http://discount-grpc:8080"
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "guest",
+        "Password": "guest"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*"
+    }

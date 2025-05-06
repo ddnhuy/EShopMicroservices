@@ -37,11 +37,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingBlocks.Messaging", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{79DC6BF3-5412-4B24-9BFE-15AE5C21E458}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpApiGateway", "ApiGateways\YarpApiGateway\YarpApiGateway.csproj", "{F17C088D-610F-4DF6-8004-67013B0EF01A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YarpApiGateway", "ApiGateways\YarpApiGateway\YarpApiGateway.csproj", "{F17C088D-610F-4DF6-8004-67013B0EF01A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{415C0E31-9B8F-4BAB-AB2D-1FBDEDBBF606}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shopping.Web", "WebApps\Shopping.Web\Shopping.Web.csproj", "{90D1967D-4E7D-4544-BE33-2A6B2032DF90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{1602E080-929C-484C-8C7A-5928597BC3EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kubernetes", "Kubernetes\Kubernetes.csproj", "{F93C0ADB-BE73-41C8-B11D-33D77202FD30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +101,10 @@ Global
 		{90D1967D-4E7D-4544-BE33-2A6B2032DF90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90D1967D-4E7D-4544-BE33-2A6B2032DF90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90D1967D-4E7D-4544-BE33-2A6B2032DF90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F93C0ADB-BE73-41C8-B11D-33D77202FD30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F93C0ADB-BE73-41C8-B11D-33D77202FD30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F93C0ADB-BE73-41C8-B11D-33D77202FD30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F93C0ADB-BE73-41C8-B11D-33D77202FD30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -117,6 +125,7 @@ Global
 		{22B738D8-B22A-43FD-B750-8A30159C09A8} = {4FBBF5F0-BE0B-4D1E-9339-D741DBBD9080}
 		{F17C088D-610F-4DF6-8004-67013B0EF01A} = {79DC6BF3-5412-4B24-9BFE-15AE5C21E458}
 		{90D1967D-4E7D-4544-BE33-2A6B2032DF90} = {415C0E31-9B8F-4BAB-AB2D-1FBDEDBBF606}
+		{F93C0ADB-BE73-41C8-B11D-33D77202FD30} = {1602E080-929C-484C-8C7A-5928597BC3EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {017E13AA-9910-4694-922A-3C54A083FD08}

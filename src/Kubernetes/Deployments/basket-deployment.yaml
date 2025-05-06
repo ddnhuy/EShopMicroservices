@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basket-api
+  namespace: eshop
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: basket-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: basket-api
+    spec:
+      containers:
+        - name: basket-api
+          image: ddnhuy/basket-api
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: service-basket-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres-basket 5432; do echo waiting for postgres; sleep 2; done']
+        - name: wait-for-redis
+          image: busybox
+          command: ['sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done']
+        - name: wait-for-discountgrpc
+          image: busybox
+          command: ['sh', '-c', 'until nc -z discount-grpc 8080; do echo waiting for discountgrpc; sleep 2; done']
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+      volumes:
+        - name: config-volume
+          configMap:
+            name: service-basket-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

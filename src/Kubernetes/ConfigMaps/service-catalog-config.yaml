@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-catalog-config
+  namespace: eshop
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "Database": "Server=postgres-catalog;Port=5432;Database=CatalogDb;User Id=postgres;Password=postgres;Include Error Detail=true;"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*"
+    }
