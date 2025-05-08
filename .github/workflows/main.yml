@@ -14,7 +14,6 @@ env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
   VERSION_TAG: ${{ github.sha }}
-  KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
 jobs:
   build-and-test:
@@ -113,7 +112,7 @@ jobs:
       - name: Set KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
-          printf "%s" "${{ env.KUBECONFIG }}" > $HOME/.kube/config
+          printf "%s" "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
       - name: Helm upgrade
