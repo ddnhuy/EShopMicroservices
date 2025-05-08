@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-config
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "Database": "Server=sqlserver;Database=OrderDb;User Id=sa;Password=Sa_12345678;Encrypt=False;TrustServerCertificate=True;"
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "guest",
+        "Password": "guest"
+      },
+      "FeatureManagement": {
+        "OrderFullfilment": false
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*"
+    }
