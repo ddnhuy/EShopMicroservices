@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver
+  namespace: eshop
+spec:
+  ports:
+    - port: 1433
+      targetPort: 1433
+  selector:
+    app: sqlserver

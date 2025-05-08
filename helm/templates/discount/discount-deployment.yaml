@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discount-grpc
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: discount-grpc
+  {{- with .Values.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: discount-grpc
+    spec:
+      containers:
+        - name: discount-grpc
+          image: "ddnhuy/discount-grpc:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: sqlite-storage
+              mountPath: /app/data
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      volumes:
+        - name: sqlite-storage
+          persistentVolumeClaim:
+            claimName: discount-pvc
+        - name: config-volume
+          configMap:
+            name: discount-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json
