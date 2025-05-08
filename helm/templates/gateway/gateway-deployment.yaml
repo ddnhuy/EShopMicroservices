@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: "ddnhuy/api-gateway:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "ddnhuy/yarpapigateway:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080

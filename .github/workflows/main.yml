@@ -64,8 +64,9 @@ jobs:
         VERSION_TAG: ${{ env.VERSION_TAG }}
       run: |
         for SERVICE in $GRPC_SERVICES; do
-          IMAGE="$DOCKER_HUB_USERNAME/$SERVICE"
-          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/$SERVICE.Grpc/Dockerfile .
+          SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-grpc"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile .
           docker push $IMAGE:$VERSION_TAG
         done
 
@@ -76,9 +77,10 @@ jobs:
         VERSION_TAG: ${{ env.VERSION_TAG }}
       run: |
         for SERVICE in $API_SERVICES; do
-            IMAGE="$DOCKER_HUB_USERNAME/$SERVICE"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/$SERVICE.API/Dockerfile .
-            docker push $IMAGE:$VERSION_TAG
+          SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-api"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
         done
 
     - name: Build and Push images for API Gateways
@@ -88,7 +90,8 @@ jobs:
         VERSION_TAG: ${{ env.VERSION_TAG }}
       run: |
         for GATEWAY in $GATEWAYS; do
-          IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY"
+          GATEWAY_LOWER=$(echo $GATEWAY | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY_LOWER"
           docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile .
           docker push $IMAGE:$VERSION_TAG
         done
