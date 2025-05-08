@@ -97,7 +97,7 @@ jobs:
         done
 
   deploy:
-    needs: build-and-test
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
