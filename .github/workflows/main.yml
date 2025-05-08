@@ -29,7 +29,7 @@ jobs:
 
     - name: Build and start Docker Compose
       run: |
-        docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+        docker compose -f ./src/docker-compose.yml -f ./src/docker-compose.override.yml up -d
 
     # - name: Wait for containers to be ready
     #   run: |
@@ -41,7 +41,7 @@ jobs:
 
     - name: Clean up Docker containers
       run: |
-        docker compose -f docker-compose.yml -f docker-compose.override.yml down
+        docker compose -f ./src/docker-compose.yml -f ./src/docker-compose.override.yml down
 
   build-and-push:
     needs: build-and-test
