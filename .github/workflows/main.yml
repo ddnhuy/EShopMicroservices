@@ -1,0 +1,113 @@
+name: Multi-Service Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  API_SERVICES: "Catalog Basket Order"
+  GRPC_SERVICES: "Discount"
+  GATEWAYS: "YarpApiGateway"
+  CHART_DIR: ./helm
+  RELEASE_NAME: eshop
+  NAMESPACE: eshop
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  VERSION_TAG: ${{ github.sha }}
+  KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and start Docker Compose
+      run: |
+        docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
+    # - name: Wait for containers to be ready
+    #   run: |
+    #     sleep 10
+
+    # - name: Run tests
+    #   run: |
+    #     dotnet test ./tests/ArchitectureTests/ArchitectureTests.csproj
+
+    - name: Clean up Docker containers
+      run: |
+        docker compose -f docker-compose.yml -f docker-compose.override.yml down
+
+  build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to Docker_Hub
+      uses: docker/login-action@v3
+      with:
+        username: $DOCKER_HUB_USERNAME
+        password: $DOCKER_HUB_TOKEN
+
+    - name: Build and Push images for GRPC Services
+      env:
+        GRPC_SERVICES: ${{ env.GRPC_SERVICES }}
+        DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+        VERSION_TAG: ${{ env.VERSION_TAG }}
+      run: |
+        for SERVICE in $GRPC_SERVICES; do
+          IMAGE="$DOCKER_HUB_USERNAME/$SERVICE"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/$SERVICE.Grpc/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
+        done
+
+    - name: Build and Push images for API Services
+      env:
+        API_SERVICES: ${{ env.API_SERVICES }}
+        DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+        VERSION_TAG: ${{ env.VERSION_TAG }}
+      run: |
+        for SERVICE in $API_SERVICES; do
+            IMAGE="$DOCKER_HUB_USERNAME/$SERVICE"
+            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/$SERVICE.API/Dockerfile .
+            docker push $IMAGE:$VERSION_TAG
+        done
+
+    - name: Build and Push images for API Gateways
+      env:
+        GATEWAYS: ${{ env.GATEWAYS }}
+        DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+        VERSION_TAG: ${{ env.VERSION_TAG }}
+      run: |
+        for GATEWAY in $GATEWAYS; do
+          IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
+        done
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Helm and kubectl
+      uses: azure/setup-helm@v3
+
+    - name: Set KUBECONFIG
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ env.KUBECONFIG }}" > $HOME/.kube/config
+
+    - name: Helm upgrade
+      run: helm upgrade --install $RELEASE_NAME $CHART_DIR -n $NAMESPACE --create-namespace --atomic --wait --set image.tag=${{ env.VERSION_TAG }}
