@@ -113,7 +113,8 @@ jobs:
       - name: Set KUBECONFIG
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ env.KUBECONFIG }}" > $HOME/.kube/config
+          printf "%s" "${{ env.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
       - name: Helm upgrade
         run: helm upgrade --install $RELEASE_NAME $CHART_DIR -n $NAMESPACE --create-namespace --atomic --wait --set image.tag=${{ env.VERSION_TAG }}
